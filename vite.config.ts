@@ -49,7 +49,7 @@ export default defineConfig({
         target: "http://127.0.0.1:8000/", //反向代理的目标地址
         // target: 'http://hotel.hly.galen.asia/hotel', //反向代理的目标地址
         changeOrigin: true, //允许跨域
-        //替换掉hotel前缀 防止多个hotel地址
+        //替换掉api前缀 防止多个api地址
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },

@@ -7,60 +7,44 @@ import { BrowserRouter, useRoutes } from "react-router-dom";
 // ~react-pages 是一个约定俗成的路径，通常表示自动生成的路由配置文件
 import routes from "~react-pages";
 
+import type { ConfigProviderProps } from "antd";
+
+import LanguageSwitcher from "./components/Language";
+// Ant Design 多语言包
+import enUS from "antd/locale/en_US";
+import zhCN from "antd/locale/zh_CN";
+import zhTW from "antd/locale/zh_TW";
+
+// 类型定义
+type Locale = ConfigProviderProps["locale"];
+
+const localeConfig = {
+  en: {
+    antd: enUS,
+    dayjs: "en",
+    i18n: "en",
+    display: "En",
+  },
+  zh_cn: {
+    antd: zhCN,
+    dayjs: "zh-cn",
+    i18n: "zh_cn",
+    display: "简",
+  },
+  zh_tw: {
+    antd: zhTW,
+    dayjs: "zh-tw",
+    i18n: "zh_tw",
+    display: "繁",
+  },
+};
+
+// 路由 组件
 const Routers = () => {
   // 使用 useNavigate 钩子获取导航函数，并将其赋值给 React.navigate
   // 这样可以在应用的任何地方通过 React.navigate 进行页面跳转
   let navigate = useNavigate();
   React.navigate = navigate;
-
-  // // 状态变量
-  // const [key] = useState<KeyType>({
-  //     id: 0,
-  // });
-
-  // // 获取当前路径
-  // const { pathname } = useLocation();
-
-  // useEffect(() => {
-  //     // 登录验证函数
-  //     const Check = async (key: KeyType) => {
-  //         // 获取cookies (用户信息)
-  //         let user = await checkApi(key);
-
-  //         // 提取对象属性名，以数组返回，判断数组长度是否为0
-  //         if (Object.getOwnPropertyNames(user).length === 0) {
-  //             // replace 路由跳转
-  //             React.navigate("", { replace: true });
-
-  //             // 提示信息
-  //             console.log("🚀 ~ Check ~ 提示信息:", "请先登录");
-
-  //             // return false;
-  //             return true
-  //         }
-
-  //         // 获取用户id和手机号并赋值
-  //         key.id = user.id ?? 0;
-
-  //         // 发起请求
-  //         let result = await await React.Http.post(key);
-
-  //         if (result.code === 1) {
-  //             // 重新更新用户信息
-  //             React.Cookies.save("user", result.data, { path: "/" });
-
-  //             return true;
-  //         } else {
-  //             // { replace: true } 替换而不是加入一个新的历史记录
-  //             React.navigate("/user/login", { replace: true });
-
-  //             return false;
-  //         }
-  //     };
-
-  //     // 2. 检查当前路径是否在路由规则中
-  //     if (!React.RouterRules.includes(pathname)) Check(key);
-  // }, [pathname, navigate, key]);
 
   return (
     <>
@@ -74,12 +58,39 @@ const Routers = () => {
 };
 
 const App = () => {
+  const [locale, setLocale] = useState<Locale>(enUS);
   return (
     <>
       {/* /使用 BrowserRouter 包裹整个应用，启用路由功能 */}
       <BrowserRouter>
-        {/* 渲染 Routers 组件，显示路由内容 */}
-        <Routers />
+        <React.A.ConfigProvider
+          locale={locale}
+          theme={{
+            components: {
+              Button: {
+                borderRadius: 8,
+                colorPrimaryHover: "#40a9ff",
+              },
+            },
+          }}
+        >
+          <div
+            style={{
+              position: "fixed",
+              top: 20,
+              right: 20,
+              zIndex: 1000,
+            }}
+          >
+            {/* 语言切换器 */}
+            <LanguageSwitcher
+              onChange={setLocale}
+              localeConfig={localeConfig}
+            />
+          </div>
+          {/* 渲染 Routers 组件，显示路由内容 */}
+          <Routers />
+        </React.A.ConfigProvider>
       </BrowserRouter>
     </>
   );

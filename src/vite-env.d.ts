@@ -10,6 +10,8 @@ declare global {
     let Http: Module;
     let Cookies: Module;
     let RouterRules: Array;
+    let A: Module;
+    let I: Module;
   }
 }
 
@@ -19,4 +21,6 @@ declare namespace React {
   let Http: Module;
   let Cookies: Module;
   let RouterRules: Array;
+  let A: Module;
+  let I: Module;
 }

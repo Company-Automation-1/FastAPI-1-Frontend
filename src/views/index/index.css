@@ -40,3 +40,14 @@
 .read-the-docs {
   color: #888;
 }
+
+/* 加载过渡效果 */
+.ant-image {
+  transition: opacity 0.1s ease-in;
+}
+
+/* 每个卡片项的间距修正 */
+.ant-upload-list-item-container {
+  margin: 10px 0px 10px 30px !important; /* 与容器的负边距对应 */
+  /* margin-bottom: 25px !important; */
+}
