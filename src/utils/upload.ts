@@ -35,3 +35,16 @@ export const generateVideoThumbnail = (file: Blob): Promise<string> => {
     });
   });
 };
+
+// 文本截取
+export const parseContent = (raw: string) => {
+  // 使用多行模式匹配标题，支持“标题：”或“# ”开头
+  const titleMatch = raw.match(/^(?:标题：|#\s*)(.*)$/m);
+  const title = titleMatch?.[1]?.trim() || "";
+
+  // 匹配正文内容，确保捕获所有字符（包括换行符）
+  const contentMatch = raw.match(/正文：([\s\S]*)/);
+  const content = contentMatch?.[1]?.trim() || "";
+
+  return { title, content };
+};

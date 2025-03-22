@@ -2,9 +2,16 @@
   "Click or drag file to this area to upload": "點擊或拖曳檔案至此區域進行上傳",
   "English": "英文",
   "File": "檔案",
+  "File Content Preview": "文件內容預覽",
+  "Images": "影像",
+  "No file content to display": "沒有要顯示的文件內容",
+  "Please input": "請輸入",
   "Submit": "送出",
-  "Support for a single or bulk upload": "支援單次或批量上傳",
-  " Strictly prohibited from": "嚴禁",
+  "Support for a single or bulk upload": {
+    " Strictly prohibited from": "支援單次或批量上傳。嚴禁"
+  },
+  "Support for text formats": "支援文本格式",
+  "Text": "文本",
   "Time": "時間",
   "hello": "你好",
   "uploading company data or other banned files": "上傳公司資料或其他被禁止的檔案"

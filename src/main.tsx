@@ -5,11 +5,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "@/global";
 import "@/i18n/index";
+import { StyleProvider } from "@ant-design/cssinjs";
 
 createRoot(document.getElementById("root")!).render(
   // <ConfigProvider direction="rtl">
   <StrictMode>
-    <App />
+    <StyleProvider>
+      <App />
+    </StyleProvider>
   </StrictMode>
   // </ConfigProvider>
 );

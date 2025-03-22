@@ -1,30 +1,43 @@
 import React from "react";
-import "./index.css";
+import "./index.scss";
 import type { GetProp, UploadFile, UploadProps, FormProps } from "antd";
 import { Upload } from "antd";
-import { getBase64, generateVideoThumbnail } from "@/utils/upload";
+import {
+  getBase64,
+  generateVideoThumbnail,
+  parseContent,
+} from "@/utils/upload";
 import { useTranslation } from "react-i18next";
+import TextFileUploader from "@/components/TextUoloader/TextUoloader";
+import dayjs from "dayjs";
 
+// 定义表单字段类型
+interface FormValues {
+  time: dayjs.Dayjs; // 时间字段，使用dayjs类型
+  text?: string; // 可选文本字段
+  title: string; // 标题字段
+  content: string; // 内容字段
+  fileList: UploadFile[]; // 文件列表，用于存储上传的文件
+}
+
+// 定义文件类型，用于上传组件
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-type FieldType = {
-  [key: string]: any;
-};
-
-const { Dragger } = Upload;
+const { Dragger } = Upload; // 解构出Dragger组件用于拖拽上传
 
 const Index: React.FC = () => {
-  const { t } = useTranslation();
-  const [previewOpen, setPreviewOpen] = React.useState(false);
-  const [previewImage, setPreviewImage] = React.useState<string | null>(null);
-  const [currentFile, setCurrentFile] = React.useState<UploadFile | null>(null);
-  const [videoUrl, setVideoUrl] = React.useState<string | null>(null);
-  const [fileList, setFileList] = React.useState<UploadFile[]>([]);
+  const { t } = useTranslation(); // 国际化翻译hook
+  const [previewOpen, setPreviewOpen] = React.useState(false); // 控制预览窗口是否打开
+  const [previewImage, setPreviewImage] = React.useState<string | null>(null); // 预览图片的URL
+  const [currentFile, setCurrentFile] = React.useState<UploadFile | null>(null); // 当前预览的文件
+  const [videoUrl, setVideoUrl] = React.useState<string | null>(null); // 视频预览的URL
+  const [fileList, setFileList] = React.useState<UploadFile[]>([]); // 上传文件列表
 
-  // 处理预览（使用useCallback优化）
+  // 处理文件预览逻辑
   const handlePreview = React.useCallback(async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       const originFile = file.originFileObj as FileType;
       try {
+        // 根据文件类型生成预览：视频生成缩略图，图片生成base64
         file.preview = originFile?.type.startsWith("video/")
           ? await generateVideoThumbnail(originFile)
           : await getBase64(originFile);
@@ -38,35 +51,36 @@ const Index: React.FC = () => {
     setPreviewOpen(true);
   }, []);
 
-  // 清理视频URL
+  // 清理视频URL的副作用
   React.useEffect(() => {
     if (currentFile?.originFileObj?.type.startsWith("video/")) {
       const url = URL.createObjectURL(currentFile.originFileObj);
       setVideoUrl(url);
       return () => {
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url); // 组件卸载时释放URL对象
         setVideoUrl(null);
       };
     }
   }, [currentFile]);
 
+  // 关闭预览窗口
   const handleClose = React.useCallback(() => {
     setPreviewOpen(false);
     setCurrentFile(null);
     setPreviewImage(null);
   }, []);
 
-  // 使用useMemo优化上传配置
+  // 上传组件的配置项
   const props = React.useMemo<UploadProps>(
     () => ({
       name: "file",
-      multiple: true,
+      multiple: true, // 允许上传多个文件
       fileList,
       onPreview: handlePreview,
-      beforeUpload: () => false,
-      listType: "picture-card",
+      beforeUpload: () => false, // 阻止自动上传
+      listType: "picture-card", // 使用图片卡片样式
       onChange: ({ fileList: newFileList = [] }) => {
-        setFileList(newFileList);
+        setFileList(newFileList); // 更新文件列表
       },
       previewFile: async (file: FileType | Blob) => {
         if (file instanceof Blob && file.type.startsWith("video/")) {
@@ -78,44 +92,42 @@ const Index: React.FC = () => {
     [fileList, handlePreview]
   );
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (fieldsValue) => {
+  // 表单提交处理函数
+  const onFinish: FormProps<FormValues>["onFinish"] = (values) => {
     const transformedValues = {
-      ...fieldsValue,
-      time: fieldsValue.time?.unix(),
-      file: fileList,
+      ...values,
+      time: values.time.unix(), // 将时间转换为unix时间戳
+      ...(values.text ? parseContent(values.text) : {}), // 解析文本内容
     };
-    console.log("Success:", transformedValues);
+    delete transformedValues.text;
+
+    console.log("API请求逻辑:", transformedValues);
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
-
+  // 表单验证配置
   const config = {
     rules: [
       {
         required: true,
-        message: "Please input!",
+        message: `${t("Please input")}!`, // 使用国际化文本
       },
     ],
   };
 
   return (
     <>
-      <h1>{t("English")}</h1>
       <React.A.Form
         name="forms"
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
+        {/* 时间选择器部分 */}
         <div style={{ display: "flex" }}>
           <React.A.Form.Item label={`${t("Time")}`} name="time" {...config}>
             <React.A.DatePicker showTime />
           </React.A.Form.Item>
 
+          {/* 提交按钮 */}
           <div
             style={{
               display: "flex",
@@ -132,8 +144,20 @@ const Index: React.FC = () => {
           </div>
         </div>
 
+        {/* 文本上传组件 */}
         <React.A.Form.Item
-          label={`${t("File")}`}
+          label={`${t("Text")}`}
+          name="text"
+          {...config}
+          valuePropName="value"
+          getValueFromEvent={(content: any) => content}
+        >
+          <TextFileUploader />
+        </React.A.Form.Item>
+
+        {/* 图片上传组件 */}
+        <React.A.Form.Item
+          label={`${t("Images")}`}
           name="file"
           {...config}
           valuePropName="fileList"
@@ -150,12 +174,13 @@ const Index: React.FC = () => {
               {t(
                 "Support for a single or bulk upload. Strictly prohibited from"
               )}
-              {t("uploading company data or other banned files")}.
+              {t("uploading company data or other banned files")}
             </p>
           </Dragger>
         </React.A.Form.Item>
       </React.A.Form>
 
+      {/* 图片/视频预览组件 */}
       <React.A.Image
         wrapperStyle={{ display: "none" }}
         preview={{
@@ -179,8 +204,8 @@ const Index: React.FC = () => {
               )}
             </div>
           ),
-          toolbarRender: () => null,
-          destroyOnClose: true,
+          toolbarRender: () => null, // 隐藏工具栏
+          destroyOnClose: true, // 关闭时销毁组件
         }}
         src={previewImage}
       />
