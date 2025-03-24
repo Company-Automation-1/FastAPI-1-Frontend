@@ -19,7 +19,7 @@ export class Request {
   instance: AxiosInstance;
   // 基础配置，url和超时时间
   baseConfig: AxiosRequestConfig = {
-    // baseURL: "/index", // 请求后台地址模块
+    // baseURL: "/api", // 请求后台地址模块
     timeout: 60000,
     headers: {
       // 设置后端需要的传参类型

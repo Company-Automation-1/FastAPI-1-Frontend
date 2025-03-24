@@ -38,6 +38,7 @@ export const generateVideoThumbnail = (file: Blob): Promise<string> => {
 
 // 文本截取
 export const parseContent = (raw: string) => {
+  if (!raw) return {};
   // 使用多行模式匹配标题，支持“标题：”或“# ”开头
   const titleMatch = raw.match(/^(?:标题：|#\s*)(.*)$/m);
   const title = titleMatch?.[1]?.trim() || "";

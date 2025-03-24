@@ -1,11 +1,11 @@
-// TextFileUploader.tsx
+// TextFileUpload.tsx
 import React from "react";
 import type { UploadProps } from "antd";
 import { Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/utils/useStyle"; // 自定义样式Hook
-import styles from "./TextUoloader.module.scss";
+import styles from "./TextUpload.module.scss";
 
 const { Dragger } = Upload;
 

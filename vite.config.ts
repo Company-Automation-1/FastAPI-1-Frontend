@@ -46,7 +46,7 @@ export default defineConfig({
     //反向代理
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000/", //反向代理的目标地址
+        target: "http://127.0.0.1:8000/api/", //反向代理的目标地址
         // target: 'http://hotel.hly.galen.asia/hotel', //反向代理的目标地址
         changeOrigin: true, //允许跨域
         //替换掉api前缀 防止多个api地址
