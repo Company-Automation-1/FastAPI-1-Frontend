@@ -2,7 +2,6 @@
 import React from "react";
 import type { UploadProps } from "antd";
 import { Upload } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/utils/useStyle"; // 自定义样式Hook
 import styles from "./TextUpload.module.scss";
@@ -85,7 +84,7 @@ const TextFileUploader = forwardRef<
         <div className={styles.uploadArea}>
           <Dragger {...props}>
             <p className="ant-upload-drag-icon">
-              <InboxOutlined />
+              <React.I.InboxOutlined />
             </p>
             <p className="ant-upload-text">
               {t("Click or drag file to this area to upload")}

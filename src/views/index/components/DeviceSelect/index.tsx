@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Select } from 'antd';
-import type { SelectProps } from 'antd';
+import React from "react";
+import type { SelectProps } from "antd";
 import { devicesApi } from "@/api/index";
 
 interface DeviceOption {
@@ -8,7 +7,7 @@ interface DeviceOption {
   value: string;
 }
 
-type DeviceSelectProps = Omit<SelectProps, 'options'>;
+type DeviceSelectProps = Omit<SelectProps, "options">;
 
 const DeviceSelect: React.FC<DeviceSelectProps> = (props) => {
   const [devices, setDevices] = useState<DeviceOption[]>([]);
@@ -20,12 +19,12 @@ const DeviceSelect: React.FC<DeviceSelectProps> = (props) => {
         // 转换数据格式以匹配 Select 组件要求
         const options = result.data.devices.map((device: string) => ({
           label: device,
-          value: device
+          value: device,
         }));
         setDevices(options);
       }
     } catch (error) {
-      console.error('Failed to fetch devices:', error);
+      console.error("Failed to fetch devices:", error);
     }
   };
 
@@ -34,7 +33,7 @@ const DeviceSelect: React.FC<DeviceSelectProps> = (props) => {
   }, []);
 
   return (
-    <Select
+    <React.A.Select
       style={{ width: 200 }}
       allowClear
       options={devices}
@@ -44,4 +43,4 @@ const DeviceSelect: React.FC<DeviceSelectProps> = (props) => {
   );
 };
 
-export default DeviceSelect; 
+export default DeviceSelect;

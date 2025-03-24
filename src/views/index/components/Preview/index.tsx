@@ -1,5 +1,4 @@
 import React from "react";
-import { Image } from "antd";
 import type { UploadFile } from "antd";
 
 interface PreviewProps {
@@ -30,11 +29,11 @@ const Preview: React.FC<PreviewProps> = ({
 
   return (
     <>
-      <Image
+      <React.A.Image
         wrapperStyle={{ display: "none" }}
         preview={{
           visible: previewOpen,
-          onVisibleChange: (visible) => !visible && onClose(),
+          onVisibleChange: (visible: boolean) => !visible && onClose(),
           imageRender: () => (
             <div style={{ display: "flex", justifyContent: "center" }}>
               {videoUrl ? (

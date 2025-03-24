@@ -34,7 +34,7 @@ const ImgUpload: React.FC<ImgUploadProps> = ({
         return getBase64(file as Blob);
       },
     }),
-    [fileList, onChange]
+    [fileList, onChange, onPreview]
   );
 
   return (

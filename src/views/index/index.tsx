@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.scss";
 import type { GetProp, UploadFile, UploadProps, FormProps } from "antd";
-import { Form, DatePicker, Button } from "antd";
+import { Form } from "antd";
 import {
   getBase64,
   generateVideoThumbnail,
@@ -105,7 +105,7 @@ const Index: React.FC = () => {
 
   return (
     <>
-      <Form
+      <React.A.Form
         form={form}
         name="forms"
         initialValues={{ remember: true, files: [] }}
@@ -118,22 +118,22 @@ const Index: React.FC = () => {
             width: "90%",
           }}
         >
-          <Form.Item label={t("Time")} name="timestamp" {...config}>
-            <DatePicker showTime minDate={dayjs()} />
-          </Form.Item>
+          <React.A.Form.Item label={t("Time")} name="timestamp" {...config}>
+            <React.A.DatePicker showTime minDate={dayjs()} />
+          </React.A.Form.Item>
 
-          <Form.Item label={t("Phone")} name="device_name" {...config}>
+          <React.A.Form.Item label={t("Phone")} name="device_name" {...config}>
             <DeviceSelect />
-          </Form.Item>
+          </React.A.Form.Item>
 
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit">
+          <React.A.Form.Item label={null}>
+            <React.A.Button type="primary" htmlType="submit">
               {t("Submit")}
-            </Button>
-          </Form.Item>
+            </React.A.Button>
+          </React.A.Form.Item>
         </div>
 
-        <Form.Item
+        <React.A.Form.Item
           label={t("Text")}
           style={{ marginLeft: 11 }}
           name="text"
@@ -141,9 +141,9 @@ const Index: React.FC = () => {
           getValueFromEvent={(content: any) => content}
         >
           <TextFileUploader />
-        </Form.Item>
+        </React.A.Form.Item>
 
-        <Form.Item
+        <React.A.Form.Item
           label={t("Images")}
           name="files"
           {...config}
@@ -156,8 +156,8 @@ const Index: React.FC = () => {
             onPreview={handlePreview}
             t={t}
           />
-        </Form.Item>
-      </Form>
+        </React.A.Form.Item>
+      </React.A.Form>
 
       <Preview
         previewOpen={previewOpen}
