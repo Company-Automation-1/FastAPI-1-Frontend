@@ -92,7 +92,10 @@ const Index: React.FC = () => {
     try {
       const result = await uploadApi(data);
       if (result.code === 1) {
+        console.log(result);
+        
         form.resetFields();
+        React.toast(result.msg, 'success');
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -105,6 +108,7 @@ const Index: React.FC = () => {
 
   return (
     <>
+    {/* <React.A.Button onClick={() => React.toast('1111','error' )}>1111</React.A.Button> */}
       <React.A.Form
         form={form}
         name="forms"

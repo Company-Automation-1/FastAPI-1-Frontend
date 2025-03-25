@@ -12,6 +12,7 @@ declare global {
     let RouterRules: Array;
     let A: Module;
     let I: Module;
+    let toast: Function;
   }
 }
 
@@ -23,4 +24,5 @@ declare namespace React {
   let RouterRules: Array;
   let A: Module;
   let I: Module;
+  let toast: Function;
 }

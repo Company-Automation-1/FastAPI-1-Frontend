@@ -9,11 +9,13 @@ import routes from "~react-pages";
 
 import type { ConfigProviderProps } from "antd";
 
-import LanguageSwitcher from "./components/Language";
+import LanguageSwitcher from "@/components/Language";
 // Ant Design 多语言包
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import zhTW from "antd/locale/zh_TW";
+
+import Toast from "@/components/Toast";
 
 // 类型定义
 type Locale = ConfigProviderProps["locale"];
@@ -48,6 +50,7 @@ const Routers = () => {
 
   return (
     <>
+      <Toast />
       {/* 使用 React.Suspense 包裹路由组件，实现懒加载 */}
       <React.Suspense>
         {/* 使用 useRoutes 钩子根据 routes 配置生成路由列表 */}
