@@ -1,174 +1,85 @@
 import React from "react";
-import "./index.scss";
-import type { GetProp, UploadFile, UploadProps, FormProps } from "antd";
-import { Form } from "antd";
-import {
-  getBase64,
-  generateVideoThumbnail,
-  parseContent,
-} from "@/utils/upload";
 import { useTranslation } from "react-i18next";
-import TextFileUploader from "@/views/index/components/TextUpload/TextUpload";
-import dayjs from "dayjs";
-import { uploadApi } from "@/api/index";
-import utc from "dayjs/plugin/utc";
-import ImgUpload from "./components/ImgUpload/index";
-import Preview from "./components/Preview/index";
-import DeviceSelect from "./components/DeviceSelect";
-
-interface FormValues {
-  timestamp: dayjs.Dayjs;
-  device_name: string;
-  text?: string;
-  title?: string;
-  content?: string;
-  files: UploadFile[];
-}
-
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-
-dayjs.extend(utc);
+import type { UploadProps, TreeDataNode } from "antd";
+import Tree from "./components/Tree";
+import "./index.scss";
 
 const Index: React.FC = () => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
-  const [previewOpen, setPreviewOpen] = React.useState(false);
-  const [previewImage, setPreviewImage] = React.useState<string | undefined>(
-    undefined
-  );
-  const [currentFile, setCurrentFile] = React.useState<UploadFile | null>(null);
-  const [fileList, setFileList] = React.useState<UploadFile[]>([]);
+  const [form] = React.A.Form.useForm();
+  const [fileList, setFileList] = React.useState<File[]>([]);
+  const [treeData, setTreeData] = React.useState<TreeDataNode[]>([]);
 
-  const handleFileListChange = (newFileList: UploadFile[]) => {
-    setFileList(newFileList);
-    form.setFields([{ name: "files", value: newFileList }]);
+  const props: UploadProps = {
+    name: "file",
+    multiple: true,
+    directory: true,
+    showUploadList: false,
+    beforeUpload: () => false,
   };
 
-  const handlePreview = React.useCallback(async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      const originFile = file.originFileObj as FileType;
-      try {
-        file.preview = originFile?.type.startsWith("video/")
-          ? await generateVideoThumbnail(originFile)
-          : await getBase64(originFile);
-      } catch (error) {
-        console.error("Preview generation failed:", error);
-      }
-    }
-
-    setCurrentFile(file);
-    setPreviewImage(file.url || (file.preview as string) || undefined);
-    setPreviewOpen(true);
-  }, []);
-
-  const handleClose = React.useCallback(() => {
-    setPreviewOpen(false);
-    setCurrentFile(null);
-    setPreviewImage(undefined);
-  }, []);
-
-  const onSubmit: FormProps<FormValues>["onFinish"] = async (values) => {
-    const filesBase64 = await Promise.all(
-      values.files.map(async (file) => {
-        if (!file.originFileObj) return null;
-        const base64 = await getBase64(file.originFileObj);
-        return {
-          filename: file.name,
-          data: base64.split(",")[1],
-        };
-      })
-    );
-
-    const data = {
-      ...values,
-      timestamp: values.timestamp.utc().unix(),
-      files: filesBase64.filter(
-        (file): file is { filename: string; data: string } => file !== null
-      ),
-      ...(values.text ? parseContent(values.text) : {}),
-    };
-    delete data.text;
-
-    try {
-      const result = await uploadApi(data);
-      if (result.code === 1) {
-        console.log(result);
-        
-        form.resetFields();
-        React.toast(result.msg, 'success');
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    }
+  const onSubmit = (values: any) => {
+    console.log("Submit:", values, treeData);
   };
 
-  const config = {
-    rules: [{ required: true, message: `${t("Please input")}!` }],
+  const handleReset = () => {
+    form.resetFields();
+    setFileList([]);
+    setTreeData([]);
+  };
+
+  const handleUpload = (e: any) => {
+    // 清空之前的记录
+    setFileList([]);
+    setTreeData([]);
+
+    // 处理新的文件列表
+    const files = (e?.fileList || []).map((item: any) => item.originFileObj);
+    setFileList(files);
+    return e.fileList;
   };
 
   return (
     <>
-    {/* <React.A.Button onClick={() => React.toast('1111','error' )}>1111</React.A.Button> */}
-      <React.A.Form
-        form={form}
-        name="forms"
-        initialValues={{ remember: true, files: [] }}
-        onFinish={onSubmit}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "90%",
-          }}
-        >
-          <React.A.Form.Item label={t("Time")} name="timestamp" {...config}>
-            <React.A.DatePicker showTime minDate={dayjs()} />
-          </React.A.Form.Item>
-
-          <React.A.Form.Item label={t("Phone")} name="device_name" {...config}>
-            <DeviceSelect />
-          </React.A.Form.Item>
-
-          <React.A.Form.Item label={null}>
+      <React.A.Form form={form} onFinish={onSubmit}>
+        <React.A.Form.Item>
+          <React.A.Space>
             <React.A.Button type="primary" htmlType="submit">
               {t("Submit")}
             </React.A.Button>
-          </React.A.Form.Item>
-        </div>
-
-        <React.A.Form.Item
-          label={t("Text")}
-          style={{ marginLeft: 11 }}
-          name="text"
-          valuePropName="value"
-          getValueFromEvent={(content: any) => content}
-        >
-          <TextFileUploader />
+            <React.A.Button htmlType="button" onClick={handleReset}>
+              {t("Reset")}
+            </React.A.Button>
+          </React.A.Space>
         </React.A.Form.Item>
 
         <React.A.Form.Item
-          label={t("Images")}
-          name="files"
-          {...config}
+          label={t("Upload")}
+          name="upload"
           valuePropName="fileList"
-          getValueFromEvent={(e: { fileList: any }) => e?.fileList || e}
+          getValueFromEvent={handleUpload}
+          noStyle
         >
-          <ImgUpload
-            fileList={fileList}
-            onChange={handleFileListChange}
-            onPreview={handlePreview}
-            t={t}
-          />
+          <React.A.Upload.Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <React.I.InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              {t("Click or drag file to this area to upload")}
+            </p>
+            <p className="ant-upload-hint">
+              {t(
+                "Support for a single or bulk upload. Strictly prohibited from"
+              )}
+              {t("uploading company data or other banned files")}
+            </p>
+          </React.A.Upload.Dragger>
         </React.A.Form.Item>
-      </React.A.Form>
 
-      <Preview
-        previewOpen={previewOpen}
-        previewImage={previewImage}
-        currentFile={currentFile}
-        onClose={handleClose}
-      />
+        <div className="tree-container">
+          <Tree fileList={fileList} onTreeDataChange={setTreeData} />
+        </div>
+      </React.A.Form>
     </>
   );
 };

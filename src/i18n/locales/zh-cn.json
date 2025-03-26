@@ -7,6 +7,7 @@
   "No file content to display": "没有要显示的文件内容",
   "Phone": "手机",
   "Please input": "请输入",
+  "Reset": "重置",
   "Submit": "提交",
   "Support for a single or bulk upload": {
     " Strictly prohibited from": "支持单次或批量上传。严禁"
@@ -14,6 +15,7 @@
   "Support for text formats": "支持文本格式",
   "Text": "文本",
   "Time": "时间",
+  "Upload": "上传",
   "hello": "你好2312",
   "uploading company data or other banned files": "上传公司数据或其他被禁止的文件"
 }

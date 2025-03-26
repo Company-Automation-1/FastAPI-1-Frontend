@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.scss";
 
 // 引入 react-router-dom 中的路由相关 API
 import { BrowserRouter, useRoutes } from "react-router-dom";
