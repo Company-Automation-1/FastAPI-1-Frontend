@@ -74,7 +74,7 @@ const Index: React.FC = () => {
         const base64 = await getBase64(file.originFileObj);
         return {
           filename: file.name,
-          data: base64.split(",")[1],
+          data: base64,
         };
       })
     );

@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import type { UploadProps, TreeDataNode } from "antd";
 import Tree from "./components/Tree";
 import "./index.scss";
-import { processUploadedFiles } from "../../utils/upload";
+import { processUploadedFiles } from "@/utils/upload";
+import { uploadApi } from "@/api";
 
 const Index: React.FC = () => {
   const { t } = useTranslation();
@@ -21,27 +22,50 @@ const Index: React.FC = () => {
 
   const onSubmit = async () => {
     const processedData = await processUploadedFiles(treeData as any);
-    console.log('解析后的数据结构：', processedData);
+    console.log("解析后的数据结构：", processedData);
 
-    // // 使用 map 遍历并打印每个子元素
-    // treeData[0].children?.map((child, index) => {
-    //   // console.log(`子元素 ${index}:`, child);
-    //   if (child.children) {
-    //     // 如果子元素有 children 属性，则继续遍历
-    //     child.children.map((subChild, subIndex) => {
-    //       // console.log(`子元素 ${index} 的子元素 ${subIndex}:`, subChild);
-    //       if (subChild.children) {
-    //         // 如果子元素有 children 属性，则继续遍历
-    //         // console.log(`子元素:`, subChild.children[1]);
-    //         if (subChild.children[1].children) {
-    //           subChild.children[1].children.map((file) => {
-    //             // console.log(`文件信息:`, file);
-    //           });
-    //         }
-    //       }
-    //     });
-    //   }
-    // });
+    console.log(treeData);
+
+    // 定义批次大小
+    const BATCH_SIZE = 3;
+    // 分批处理数据
+    const batches = [];
+    for (let i = 0; i < processedData.length; i += BATCH_SIZE) {
+      batches.push(processedData.slice(i, i + BATCH_SIZE));
+    }
+
+    try {
+      // 显示加载状态
+      React.A.message.loading("正在上传...", 0);
+
+      // 按批次并发处理
+      for (const batch of batches) {
+        const results = await Promise.all(
+          batch.map(async (data) => {
+            try {
+              return await uploadApi(data);
+            } catch (error) {
+              console.error("上传失败:", error);
+              return { error, data };
+            }
+          })
+        );
+
+        // 处理每个批次的结果
+        results.forEach((result: any, index: number) => {
+          if (result.error) {
+            React.A.message.error(`${batch[index].device_name} 上传失败`);
+          }
+        });
+      }
+
+      React.A.message.destroy(); // 清除加载提示
+      React.A.message.success("上传完成");
+    } catch (error) {
+      React.A.message.destroy();
+      React.A.message.error("上传过程中发生错误");
+      console.error("上传错误:", error);
+    }
   };
 
   const handleReset = () => {

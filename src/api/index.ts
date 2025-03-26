@@ -12,11 +12,10 @@ export const uploadApi = async (values: {
   }[];
 }) => {
   // 打印完整的请求报文
-  console.log("请求参:", {
-    data: values,
-  });
+  console.log(values);
   const result = await React.Http.post("/api/v1/upload/", values);
   return result;
 };
 
-export const devicesApi = async () => await React.Http.get("/api/v1/devices/list/");
+export const devicesApi = async () =>
+  await React.Http.get("/api/v1/devices/list/");
