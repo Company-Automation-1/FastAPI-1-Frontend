@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { UploadProps, TreeDataNode } from "antd";
 import Tree from "./components/Tree";
 import "./index.scss";
+import { processUploadedFiles } from "../../utils/upload";
 
 const Index: React.FC = () => {
   const { t } = useTranslation();
@@ -18,8 +19,29 @@ const Index: React.FC = () => {
     beforeUpload: () => false,
   };
 
-  const onSubmit = (values: any) => {
-    console.log("Submit:", values, treeData);
+  const onSubmit = async () => {
+    const processedData = await processUploadedFiles(treeData as any);
+    console.log('解析后的数据结构：', processedData);
+
+    // // 使用 map 遍历并打印每个子元素
+    // treeData[0].children?.map((child, index) => {
+    //   // console.log(`子元素 ${index}:`, child);
+    //   if (child.children) {
+    //     // 如果子元素有 children 属性，则继续遍历
+    //     child.children.map((subChild, subIndex) => {
+    //       // console.log(`子元素 ${index} 的子元素 ${subIndex}:`, subChild);
+    //       if (subChild.children) {
+    //         // 如果子元素有 children 属性，则继续遍历
+    //         // console.log(`子元素:`, subChild.children[1]);
+    //         if (subChild.children[1].children) {
+    //           subChild.children[1].children.map((file) => {
+    //             // console.log(`文件信息:`, file);
+    //           });
+    //         }
+    //       }
+    //     });
+    //   }
+    // });
   };
 
   const handleReset = () => {
